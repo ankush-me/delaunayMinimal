@@ -14,7 +14,12 @@ cmake, followed by make, as following:
 			 cmake ${PATH TO PROJECT DIRECTORY}
 			 make delaunay
 
+
 The code is executed as following (assuming we are in the build directory):
+
 		./bin/delaunay -i input filename [-o output filename] [-V or -A][-T]
 
-For an explanation of the various flags, run ./bin/delaunay -h.
+
+For an explanation of the various flags, run
+		
+		./bin/delaunay -h.
