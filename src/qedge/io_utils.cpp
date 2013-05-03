@@ -128,5 +128,5 @@ void writeSubdivision(const std::string &fname, DelaunaySubdivision* subD) {
 	for (int t=0; t<tris.size(); t+=1)
 		outfile <<t+1<<"\t"<<tris[t][0]<<"\t"<<tris[t][1]<<"\t"<<tris[t][2]<<endl;
 	outfile.close();
-	cout << "Written "<<fname<<endl;
+	cout << "Wrote "<<fname<<endl;
 }

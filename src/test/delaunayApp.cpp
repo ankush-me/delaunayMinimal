@@ -74,11 +74,15 @@ int main(int argc, char** argv) {
 		printUsageAndExit();
 
 	if (!output.length()) {
+		cout << "reading input.."<<endl;
 		DelaunaySubdivision subD(input);
+		cout << "input done"<<endl;
 		subD.computeDelaunay(((vertical)? VERTICAL_CUTS : ALTERNATE_CUTS), time_algorithm);
 		subD.writeToFile();
 	} else {
+		cout << "reading input.."<<endl;
 		DelaunaySubdivision subD(input, output);
+		cout << "input done"<<endl;
 		subD.computeDelaunay(((vertical)? VERTICAL_CUTS : ALTERNATE_CUTS), time_algorithm);
 		subD.writeToFile();
 	}
