@@ -1,4 +1,4 @@
-delaunayMinimal
-===============
+delaunay
+========
 
-Minimal code for delaunay triangulation.
+CS274 Final Project
