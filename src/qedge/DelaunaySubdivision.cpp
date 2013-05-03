@@ -20,7 +20,6 @@ bool  ccw(Vector2dPtr a, Vector2dPtr b, Vector2dPtr c) {
 /** Wrapper for incircle (orient2d) function.*/
 bool incircle(Vector2dPtr a, Vector2dPtr b, Vector2dPtr c, Vector2dPtr d) {
 	double val =  incircle(*a, *b, *c, *d);
-	//cout << "incircle :"<<val<<endl;
 	if (val < 1e-18) val = 0;
 	bool ret =  val > 0.0;
 	return ret;
