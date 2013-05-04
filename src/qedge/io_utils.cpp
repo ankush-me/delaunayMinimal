@@ -116,6 +116,8 @@ void writeSubdivision(const std::string &fname, DelaunaySubdivision* subD) {
 	boost::unordered_set<Edge::Ptr> marked;
 	vector<vector<int> > tris;
 
+	cout << "Number of quadedges : "<<subD->qedges.size()<<endl;
+
 	for(boost::unordered_set<QuadEdge::Ptr>::iterator it = subD->qedges.begin();
 			it != subD->qedges.end(); it++) {
 		reportTriangle((*it)->edges[0], subD, marked, tris);
