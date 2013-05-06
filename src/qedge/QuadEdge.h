@@ -28,6 +28,9 @@ class Edge;
 
 class QuadEdge {
 public:
+
+	int visit_num;
+
 	typedef	 boost::shared_ptr<QuadEdge> Ptr;
 	std::vector<boost::shared_ptr<Edge> > edges;
 

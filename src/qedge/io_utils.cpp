@@ -32,6 +32,7 @@ void readNodeFile(const std::string &fname,
 	ifstream inpfile(fname.c_str());
 	if(!inpfile.is_open()) {
 		cout << "Unable to open file : " << fname << endl;
+		exit(-1);
 	} else {
 		while(!inpfile.eof()) {
 			string line;
@@ -82,29 +83,49 @@ void readNodeFile(const std::string &fname,
 
 
 void reportTriangle(Edge::Ptr e, DelaunaySubdivision* subD,
-		boost::unordered_set<Edge::Ptr> &marked,
-		std::vector<std::vector<int> >  &tris) {
-//	if (marked.find(e) == marked.end()) {// not marked
-//		if (e->Rnext()->Rnext()->Rnext() == e) {
-//
-//			vector<int> tri(3);
-//			vector<Vector2dPtr> vertices(3);
-//
-//			tri[0] = subD->pt2index[e->org()];
-//			vertices[0] = e->org();
-//			tri[1] = subD->pt2index[e->Rnext()->org()];
-//			vertices[1] = e->Rnext()->org();
-//			tri[2] = subD->pt2index[e->Rnext()->Rnext()->org()];
-//			vertices[2] = e->Rnext()->Rnext()->org();
-//
-//			if (ccw(vertices[0], vertices[1],vertices[2])) {
-//				marked.insert(e);
-//				marked.insert(e->Rnext());
-//				marked.insert(e->Rnext()->Rnext());
-//				tris.push_back(tri);
-//			}
-//		}
-//	}
+		int check_num, std::vector<std::vector<int> >  &tris) {
+
+	if (e->visit_num == check_num) {// not marked
+		if (e->Rnext()->Rnext()->Rnext() == e) {
+
+			vector<int> tri(3);
+			tri[0] = e->org();
+			tri[1] = e->Rnext()->org();
+			tri[2] = e->Rnext()->Rnext()->org();
+
+			if (ccw(*(subD->point_ptrs[tri[0]]),
+					*(subD->point_ptrs[tri[1]]),
+					*(subD->point_ptrs[tri[2]]))) {
+				e->visit_num += 1;
+				e->Rnext()->visit_num += 1;
+				e->Rnext()->Rnext()->visit_num += 1;
+				tris.push_back(tri);
+			}
+		}
+	}
+}
+
+
+void getAllQuadEdges(char check_num, QuadEdge::Ptr qedge,
+		vector<QuadEdge::Ptr> &qedges, vector<QuadEdge::Ptr> &toCall) {
+
+	if (qedge->visit_num == check_num) {
+		qedge->visit_num += 1;
+		qedges.push_back(qedge);
+		Edge::Ptr e = qedge->edges[0];
+		Edge::Ptr f = e->Onext();
+
+		while (f!=e) {
+			toCall.push_back(f->qEdge());
+			f = f->Onext();
+		}
+
+		f = e->Dnext();
+		while (f!=e) {
+			toCall.push_back(f->qEdge());
+			f = f->Dnext();
+		}
+	}
 }
 
 
@@ -115,12 +136,20 @@ void writeSubdivision(const std::string &fname, DelaunaySubdivision* subD) {
 	boost::unordered_set<Edge::Ptr> marked;
 	vector<vector<int> > tris;
 
-	cout << "Number of quadedges : "<<subD->qedges.size()<<endl;
+	vector<QuadEdge::Ptr> qedges;
+	vector<QuadEdge::Ptr> toCall;
+	toCall.push_back(subD->randEdge);
+	while (toCall.size() != 0) {
+		QuadEdge::Ptr q = toCall.back();
+		toCall.pop_back();
+		getAllQuadEdges(0, q, qedges, toCall);
+	}
+	cout << "Number of quadedges : "<<qedges.size()<<endl;
 
-	for(boost::unordered_set<QuadEdge::Ptr>::iterator it = subD->qedges.begin();
-			it != subD->qedges.end(); it++) {
-		reportTriangle((*it)->edges[0], subD, marked, tris);
-		reportTriangle((*it)->edges[0]->Sym(), subD, marked, tris);
+	for(int i=0; i < qedges.size(); i+=1) {
+		QuadEdge::Ptr q = qedges[i];
+		reportTriangle(q->edges[0], subD, 0, tris);
+		reportTriangle(q->edges[0]->Sym(), subD, 0, tris);
 	}
 
 	ofstream outfile;

@@ -21,7 +21,7 @@ bool  DelaunaySubdivision::CCW(int a, int b, int c) {
 bool DelaunaySubdivision::INCIRCLE(int a, int b, int c, int d) {
 	double val =  incircle(*(point_ptrs[a]), *(point_ptrs[b]),
 			                *(point_ptrs[c]), *(point_ptrs[d]));
-	if (abs(val) < 1e-18) val = 0;
+	//if (abs(val) < 1e-18) val = 0;
 	bool ret =  val > 0.0;
 	return ret;
 }
@@ -43,7 +43,7 @@ bool DelaunaySubdivision::valid (Edge::Ptr e, Edge::Ptr basel) {
 }
 
 /** Constructor. */
-DelaunaySubdivision::DelaunaySubdivision(string fname, string outname) : points(), qedges() {
+DelaunaySubdivision::DelaunaySubdivision(string fname, string outname) : num_qedges(0),points(), qedges() {
 	if (fname.substr(fname.length()-5,5)!= ".node") {
 		cout << "Expecting input file with .node extension. Instead, found "
 				<<fname.substr(fname.length()-5,5)<<". Exiting.\n";
@@ -312,9 +312,11 @@ void DelaunaySubdivision::computeDelaunay(CutsType t, bool time) {
 
 	if (t==VERTICAL_CUTS) {
 		lexicoSort(points, &point_ptrs, 0, points.size()-1);
-		divideConquerVerticalCuts(0, points.size()-1);
+		std::pair<Edge::Ptr, Edge::Ptr> cvx_handles = divideConquerVerticalCuts(0, points.size()-1);
+		randEdge = cvx_handles.first->qEdge();
 	} else {
-		divideConquerAlternatingCuts(0, points.size()-1);
+		std::pair<Edge::Ptr, Edge::Ptr> cvx_handles = divideConquerAlternatingCuts(0, points.size()-1);
+		randEdge = cvx_handles.first->qEdge();
 	}
 
 	if (time) {

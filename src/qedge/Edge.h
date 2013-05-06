@@ -38,8 +38,11 @@ private:
 	Edge::Ptr     next;
 
 public:
+
+	int visit_num;
+
 	// the index of this edge in QuadEdge's list of 4 edges; \in {0,1,2,3}
-	Edge(int _idx) : idx(_idx) {}
+	Edge(int _idx) : idx(_idx), visit_num(0) {}
 
 	/** Return the quad-edge this edge is a part of.*/
 	QuadEdge::Ptr qEdge();

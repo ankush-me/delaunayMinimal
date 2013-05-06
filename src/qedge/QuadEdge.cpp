@@ -1,7 +1,7 @@
 #include "QuadEdge.h"
 #include "Edge.h"
 
-QuadEdge::QuadEdge() : edges(4) {}
+QuadEdge::QuadEdge() : visit_num(0), edges(4) {}
 
 
 /** Makes a new quad-edge.

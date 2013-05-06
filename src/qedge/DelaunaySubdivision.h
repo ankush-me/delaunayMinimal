@@ -13,7 +13,6 @@
 
 #include "utils/geom_predicates.h"
 
-
 #include <utility>
 #include "QuadEdge.h"
 #include "Edge.h"
@@ -29,14 +28,13 @@ enum CutsType {
 
 
 class DelaunaySubdivision {
-
+public:
 	// prefix of the .node used.
 	std::string out_prefix;
 
 	// holds the vertices
 	std::vector<int> points;
 	std::vector<Vector2dPtr> point_ptrs;
-
 
 	// wrapper for CCW checks for pointer to points.
 	bool CCW(int a, int b, int c);
@@ -138,6 +136,10 @@ public:
 	/** List of all the quad-edges in the subdivision. */
 	boost::unordered_set<QuadEdge::Ptr> qedges;
 
+	//pointer to a quad-edge of the subdivision
+	QuadEdge::Ptr randEdge;
+	int num_qedges;
+
 	/** Main interface function.
 	 *  T specifies which algorithm to use.*/
 	void computeDelaunay(CutsType t=ALTERNATE_CUTS, bool time=false);
@@ -147,3 +149,4 @@ public:
 };
 
 #endif
+
