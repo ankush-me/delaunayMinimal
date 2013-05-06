@@ -69,7 +69,6 @@ Edge::Ptr DelaunaySubdivision::connect(Edge::Ptr e1, Edge::Ptr e2) {
 	return e;
 }
 
-
 /** Removes the edge E from the subdivision. From G&S [pg. 103]. */
 void DelaunaySubdivision::deleteEdge(Edge::Ptr e) {
 	Edge::splice(e, e->Oprev());
