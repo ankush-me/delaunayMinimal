@@ -34,12 +34,28 @@ class DelaunaySubdivision {
 	std::string out_prefix;
 
 	// holds the vertices
-	std::vector<Vector2dPtr> points;
+	std::vector<int> points;
+	std::vector<Vector2dPtr> point_ptrs;
 
+
+	// wrapper for CCW checks for pointer to points.
+	bool CCW(int a, int b, int c);
+
+	/** Wrapper for incircle (orient2d) function.*/
+	bool INCIRCLE(int a, int b, int c, int d);
+
+	// see page G&S page 113 for the following functions
+	/** is the point x to the right of the edge e.*/
+	bool rightOf(int x, Edge::Ptr e);
+
+	/** is the point x to the left of the edge e.*/
+	bool leftOf(int x, Edge::Ptr e);
+
+	/** An edge e is valid iff, its destination lies to right the edge basel.*/
+	bool valid(Edge::Ptr e, Edge::Ptr basel);
 
 	/** Does mundane checks on the range of the indices. */
 	void checkRange(const int start, const int end) const;
-
 
 
 	/** Handles base-cases of delaunay triangulation; i.e. when |S| is 2 or 3.*/
@@ -72,7 +88,6 @@ class DelaunaySubdivision {
 	std::pair<Edge::Ptr, Edge::Ptr>
 	mergeTriangulations(std::pair<Edge::Ptr, Edge::Ptr> first_hs,
 			std::pair<Edge::Ptr, Edge::Ptr> second_hs);
-
 
 	/** Adds a new edge connecting the destination of e1 to the origin of e2.
 	 *  Returns the first primal edge of the newly added quad-edge.*/
@@ -132,21 +147,5 @@ public:
 	/** Writes this subdivision to file.*/
 	void writeToFile();
 };
-
-// wrapper for CCW checks for pointer to points.
-bool  ccw(Vector2dPtr a, Vector2dPtr b, Vector2dPtr c);
-
-// see page G&S page 113 for the following functions
-/** is the point x to the right of the edge e.*/
-bool rightOf(Vector2dPtr x, Edge::Ptr e);
-
-/** is the point x to the left of the edge e.*/
-bool leftOf(Vector2dPtr x, Edge::Ptr e);
-
-/** An edge e is valid iff, its destination lies to right the edge basel.*/
-bool valid(Edge::Ptr e, Edge::Ptr basel);
-
-/** Wrapper for incircle (orient2d) function.*/
-bool incircle(Vector2dPtr a, Vector2dPtr b, Vector2dPtr c, Vector2dPtr d);
 
 #endif

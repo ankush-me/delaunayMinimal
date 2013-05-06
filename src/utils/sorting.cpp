@@ -16,6 +16,24 @@ bool PtrCoordinateComparatorEQ::operator() (const boost::shared_ptr<Eigen::Vecto
 
 }
 
+
+/** Compares two points given their indices.*/
+IndexedComparator::IndexedComparator(int _d, int _i,
+		const std::vector<boost::shared_ptr<Eigen::Vector2d> > *_pts) :
+		d(_d), i(_i), pts(_pts), N(_pts->size()) {}
+
+bool IndexedComparator::operator() (const int &idx1, const int &idx2) const {
+	int c = i;
+	do {
+		if ( (*(pts->at(idx1)))[c] == (*(pts->at(idx1)))[c] )
+			c = mod(c+1,d);
+		else
+			return ( (*(pts->at(idx1)))[c] < (*(pts->at(idx2)))[c]);
+	} while (c != i);
+	return false;
+}
+
+
 PtrCoordinateComparator::PtrCoordinateComparator(int _d, int _i) : d(_d), i(mod(_i,d)) {}
 bool PtrCoordinateComparator::operator() (const boost::shared_ptr<Eigen::Vector2d> &v1,
 		const boost::shared_ptr<Eigen::Vector2d> &v2) const {
@@ -42,7 +60,6 @@ bool CoordinateComparator::operator() (const Eigen::VectorXd &v1, const Eigen::V
 }
 
 
-
 Comparator::Comparator(int _d) : d(_d) {}
 bool Comparator::operator() (const Eigen::VectorXd &v1, const Eigen::VectorXd &v2) const {
 	int i = 0;
@@ -62,9 +79,10 @@ bool EqComparator::operator() (const Eigen::VectorXd &v1, const Eigen::VectorXd 
 /* Sorts the pts b/w [start, end] (inclusive) indices,
  * based on COMP_I coordinate of the points, breaking ties
  * by circularly subsequent coordinates. */
-void lexicoSort(std::vector<boost::shared_ptr<Eigen::Vector2d> > & pts,
+void lexicoSort(std::vector<int> & pts,
+		const std::vector<boost::shared_ptr<Eigen::Vector2d> > *ptrs,
 		int start, int end,  int comp_coord) {
-	PtrCoordinateComparator comp(2, comp_coord);
+	IndexedComparator comp(2, comp_coord, ptrs);
 	int n = pts.size();
 	if (n != 0)
 		sort(pts.begin()+start, pts.begin()+end+1, comp);
@@ -79,10 +97,11 @@ void lexicoSort(std::vector<boost::shared_ptr<Eigen::Vector2d> > & pts,
  *                  comparisons should be done first.
  *   - Uses nth_element function of the standard library.
  *   - Mutates the vector b/w [start, end]. */
-int median(std::vector<boost::shared_ptr<Eigen::Vector2d> > & pts,
+int median(std::vector<int> & pts,
+		const std::vector<boost::shared_ptr<Eigen::Vector2d> > *ptrs,
 		int start, int end, int comp_coord) {
 	if (start > end) return -1;
-	PtrCoordinateComparator comp(2, comp_coord);
+	IndexedComparator comp(2, comp_coord, ptrs);
 	const int mid = start + (end-start)/2;
 	std::nth_element(pts.begin()+start, pts.begin()+mid, pts.begin()+end+1, comp);
 	return mid;

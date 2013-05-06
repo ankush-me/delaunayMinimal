@@ -39,6 +39,25 @@ struct PtrCoordinateComparator : std::binary_function
 };
 
 
+/** Templatized comparator for lexicographic less-than test.
+ *  The comparisons are made of the indices based on the points stores in PTS.*/
+struct IndexedComparator : std::binary_function <int, int, bool> {
+private:
+
+public:
+	int d; // dimensions of the vector
+	const std::vector<boost::shared_ptr<Eigen::Vector2d> > * pts;
+	int N;
+
+	// the coordinate index based on which two points should be compared
+	const int i;
+
+
+	IndexedComparator(int _d, int _i, const std::vector<boost::shared_ptr<Eigen::Vector2d> > *_pts);
+	bool operator() (const int &idx1, const int &idx2) const;
+};
+
+
 // compare points based on i_th coordinate. Ties broken using subsequent coordinates.
 struct CoordinateComparator : std::binary_function <Eigen::VectorXd, Eigen::VectorXd, bool> {
 	// dimensions of the vector
@@ -68,11 +87,11 @@ struct EqComparator : std::binary_function <Eigen::VectorXd, Eigen::VectorXd, bo
 };
 
 
-
 /* Sorts the pts b/w [start, end] (inclusive) indices,
  * based on COMP_I coordinate of the points, breaking ties
  * by circularly subsequent coordinates. */
-void lexicoSort(std::vector<boost::shared_ptr<Eigen::Vector2d> > & pts,
+void lexicoSort(std::vector<int> & pts,
+		const std::vector<boost::shared_ptr<Eigen::Vector2d> > *ptrs,
 		int start, int end,  int comp_coord=0);
 
 /** Partially sorts an array of points in [start, end] (inclusive)
@@ -83,58 +102,8 @@ void lexicoSort(std::vector<boost::shared_ptr<Eigen::Vector2d> > & pts,
  *                  comparisons should be done first.
  *   - Uses nth_element function of the standard library.
  *   - Mutates the vector b/w [start, end]. */
-int median(std::vector<boost::shared_ptr<Eigen::Vector2d> > & pts,
+int median(std::vector<int> & pts,
+		const std::vector<boost::shared_ptr<Eigen::Vector2d> > *ptrs,
 		int start, int end, int comp_coord=0);
-
-
-/** Sort a vector of points lexicographically. In-place. */
-/** Sort a vector of points lexicographically. In-place. Redefined for aligned-vectors.*/
-template <typename T, int R, int C, int _Options, int _MaxRows, int _MaxCols>
-void lexicoSort(std::vector<Eigen::Matrix<T, R, C, _Options, _MaxRows, _MaxCols>,
-		Eigen::aligned_allocator<Eigen::Matrix<T, R, C, _Options, _MaxRows, _MaxCols> > >& mat_nd) {
-	int n = mat_nd.size();
-	if (n != 0) {
-		int d = mat_nd[0].size();
-		sort(mat_nd.begin(), mat_nd.end(), Comparator(d));
-	}
-}
-
-/** Returns the index of the lexicographically MINIMUM point in a list of points.*/
-template <typename T, int R, int C, int _Options, int _MaxRows, int _MaxCols>
-int lexicoMin(const std::vector<Eigen::Matrix<T, R, C, _Options, _MaxRows, _MaxCols>,
-		Eigen::aligned_allocator<Eigen::Matrix<T, R, C, _Options, _MaxRows, _MaxCols> > >& mat_nd) {
-	const int n = mat_nd.size();
-	if (!n) return -1;
-
-	const int d = mat_nd[0].size();
-	Comparator isLess(d);
-
-	int min_idx = 0;
-
-	for (int i= 1; i < n; i += 1) {
-		if (isLess(mat_nd[i], mat_nd[min_idx]) )
-			min_idx = i;
-	}
-	return min_idx;
-}
-
-/** Returns the index of the lexicographically MAXIMUM point in a list of points.*/
-template <typename T, int R, int C, int _Options, int _MaxRows, int _MaxCols>
-int lexicoMax(const std::vector<Eigen::Matrix<T, R, C, _Options, _MaxRows, _MaxCols>,
-		Eigen::aligned_allocator<Eigen::Matrix<T, R, C, _Options, _MaxRows, _MaxCols> > >& mat_nd) {
-	const int n = mat_nd.size();
-	if (!n) return -1;
-
-	const int d = mat_nd[0].size();
-	Comparator isLess(d);
-
-	int min_idx = 0;
-
-	for (int i= 1; i < n; i += 1) {
-		if (!isLess(mat_nd[i], mat_nd[min_idx]) )
-			min_idx = i;
-	}
-	return min_idx;
-}
 
 #endif

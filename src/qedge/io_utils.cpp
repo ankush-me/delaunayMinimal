@@ -22,8 +22,7 @@ using namespace std;
 /** Reads a .node file specifying 2-dimension points
  *  into a vector of pointers to Eigen::Vector2d points.*/
 void readNodeFile(const std::string &fname,
-		std::vector<Vector2dPtr> &pts,
-		boost::unordered_map<Vector2dPtr, int> &pt2index) {
+		std::vector<int> &pts, std::vector<Vector2dPtr> &point_ptrs) {
 
 	bool readFirstLine        = false;
 	unsigned int N           = -1;
@@ -56,22 +55,21 @@ void readNodeFile(const std::string &fname,
 				N   = atoi(splitline[0].c_str());
 				dim = atoi(splitline[1].c_str());
 				assert(("Dimension of vertices must be 2", dim==2));
-				pts.clear();
-				pt2index.clear();
-				pts.resize(N);
+				pts.clear(); point_ptrs.clear();
+				pts.resize(N); point_ptrs.resize(N+1);
 				i = 0;
 				readFirstLine = true;
 			} else { // read the vertices
 				assert(("Insufficient data while reading .node file. "
 						"Vertices should be specified in the following format : "
 						"<vertex #> <x> <y> [attributes] [boundary marker]", splitline.size() >= 3));
-				int index =  boost::lexical_cast<int>(splitline[0]);
-				double x  = boost::lexical_cast<double>(splitline[1]);
-				double y  = boost::lexical_cast<double>(splitline[2]);
+				int index =  atoi(splitline[0].c_str());
+				double x  = atof(splitline[1].c_str());
+				double y  = atof(splitline[2].c_str());
 
 				if (i < N) {
-					pts[i] = Vector2dPtr(new Vector2d(x,y));
-					pt2index[pts[i]] = index;
+					pts[i]            = index;
+					point_ptrs[index] = Vector2dPtr(new Vector2d(x,y));
 					i += 1;
 				} else {
 					cout << ">>> Expecting "<< N << " points. Found more while reading "
@@ -85,27 +83,27 @@ void readNodeFile(const std::string &fname,
 void reportTriangle(Edge::Ptr e, DelaunaySubdivision* subD,
 		boost::unordered_set<Edge::Ptr> &marked,
 		std::vector<std::vector<int> >  &tris) {
-	if (marked.find(e) == marked.end()) {// not marked
-		if (e->Rnext()->Rnext()->Rnext() == e) {
-
-			vector<int> tri(3);
-			vector<Vector2dPtr> vertices(3);
-
-			tri[0] = subD->pt2index[e->org()];
-			vertices[0] = e->org();
-			tri[1] = subD->pt2index[e->Rnext()->org()];
-			vertices[1] = e->Rnext()->org();
-			tri[2] = subD->pt2index[e->Rnext()->Rnext()->org()];
-			vertices[2] = e->Rnext()->Rnext()->org();
-
-			if (ccw(vertices[0], vertices[1],vertices[2])) {
-				marked.insert(e);
-				marked.insert(e->Rnext());
-				marked.insert(e->Rnext()->Rnext());
-				tris.push_back(tri);
-			}
-		}
-	}
+//	if (marked.find(e) == marked.end()) {// not marked
+//		if (e->Rnext()->Rnext()->Rnext() == e) {
+//
+//			vector<int> tri(3);
+//			vector<Vector2dPtr> vertices(3);
+//
+//			tri[0] = subD->pt2index[e->org()];
+//			vertices[0] = e->org();
+//			tri[1] = subD->pt2index[e->Rnext()->org()];
+//			vertices[1] = e->Rnext()->org();
+//			tri[2] = subD->pt2index[e->Rnext()->Rnext()->org()];
+//			vertices[2] = e->Rnext()->Rnext()->org();
+//
+//			if (ccw(vertices[0], vertices[1],vertices[2])) {
+//				marked.insert(e);
+//				marked.insert(e->Rnext());
+//				marked.insert(e->Rnext()->Rnext());
+//				tris.push_back(tri);
+//			}
+//		}
+//	}
 }
 
 

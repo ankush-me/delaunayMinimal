@@ -26,8 +26,7 @@
  *  index in the node file. This is useful in writing the .ele
  *  file later. */
 void readNodeFile(const std::string &fname,
-		            std::vector<Vector2dPtr> &pts,
-		            boost::unordered_map<Vector2dPtr, int> &pt2index);
+		            std::vector<int> &pts, std::vector<Vector2dPtr> &ptrs);
 
 
 /** Writes an .ele and its corresponding .node file,

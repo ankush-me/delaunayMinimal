@@ -34,7 +34,7 @@ double incircle (Eigen::Vector2f pa, Eigen::Vector2f pb,
 }
 
 bool ccw(Vector2d pa, Vector2d pb, Vector2d pc) {
-	return (bool) (orient2d(pa, pb, pc) > 0.0);
+	return (bool) (orient2d(pa, pb, pc)> 0.0);
 }
 bool ccw(Vector2f pa, Vector2f pb, Vector2f pc) {
 	return (bool)(orient2d(pa, pb, pc) > 0.0);
