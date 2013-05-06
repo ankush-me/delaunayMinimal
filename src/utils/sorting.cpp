@@ -25,7 +25,7 @@ IndexedComparator::IndexedComparator(int _d, int _i,
 bool IndexedComparator::operator() (const int &idx1, const int &idx2) const {
 	int c = i;
 	do {
-		if ( (*(pts->at(idx1)))[c] == (*(pts->at(idx1)))[c] )
+		if ( (*(pts->at(idx1)))[c] == (*(pts->at(idx2)))[c] )
 			c = mod(c+1,d);
 		else
 			return ( (*(pts->at(idx1)))[c] < (*(pts->at(idx2)))[c]);

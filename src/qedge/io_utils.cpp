@@ -63,9 +63,9 @@ void readNodeFile(const std::string &fname,
 				assert(("Insufficient data while reading .node file. "
 						"Vertices should be specified in the following format : "
 						"<vertex #> <x> <y> [attributes] [boundary marker]", splitline.size() >= 3));
-				int index =  atoi(splitline[0].c_str());
-				double x  = atof(splitline[1].c_str());
-				double y  = atof(splitline[2].c_str());
+				int index =  boost::lexical_cast<int>(splitline[0].c_str());
+				double x  = boost::lexical_cast<double>(splitline[1].c_str());
+				double y  = boost::lexical_cast<double>(splitline[2].c_str());
 
 				if (i < N) {
 					pts[i]            = index;
@@ -79,6 +79,7 @@ void readNodeFile(const std::string &fname,
 		inpfile.close();
 	}
 }
+
 
 void reportTriangle(Edge::Ptr e, DelaunaySubdivision* subD,
 		boost::unordered_set<Edge::Ptr> &marked,

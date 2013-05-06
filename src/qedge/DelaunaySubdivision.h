@@ -138,8 +138,6 @@ public:
 	/** List of all the quad-edges in the subdivision. */
 	boost::unordered_set<QuadEdge::Ptr> qedges;
 
-	boost::unordered_map<Vector2dPtr, int> pt2index;
-
 	/** Main interface function.
 	 *  T specifies which algorithm to use.*/
 	void computeDelaunay(CutsType t=ALTERNATE_CUTS, bool time=false);

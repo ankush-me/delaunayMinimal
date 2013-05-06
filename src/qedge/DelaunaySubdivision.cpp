@@ -33,7 +33,7 @@ bool DelaunaySubdivision::rightOf (int x, Edge::Ptr e) {
 
 /** is the point x to the left of the edge e.*/
 bool DelaunaySubdivision::leftOf(int x, Edge::Ptr e) {
-	cout << "  leftof : "<<x <<","<< e->org()<<","<< e->dest()<<endl;
+	//cout << "  leftof : "<<x <<","<< e->org()<<","<< e->dest()<<endl;
 	return CCW(x, e->org(), e->dest());
 }
 
@@ -43,7 +43,7 @@ bool DelaunaySubdivision::valid (Edge::Ptr e, Edge::Ptr basel) {
 }
 
 /** Constructor. */
-DelaunaySubdivision::DelaunaySubdivision(string fname, string outname) : points(), pt2index(), qedges() {
+DelaunaySubdivision::DelaunaySubdivision(string fname, string outname) : points(), qedges() {
 	if (fname.substr(fname.length()-5,5)!= ".node") {
 		cout << "Expecting input file with .node extension. Instead, found "
 				<<fname.substr(fname.length()-5,5)<<". Exiting.\n";
@@ -59,7 +59,6 @@ DelaunaySubdivision::DelaunaySubdivision(string fname, string outname) : points(
  *  From G&S [pg. 103].*/
 Edge::Ptr DelaunaySubdivision::connect(Edge::Ptr e1, Edge::Ptr e2) {
 	Edge::Ptr e = QuadEdge::makeEdge();
-	//qedges.insert(e->qEdge());
 
 	e->setOrg(e1->dest());
 	e->setDest(e2->org());
@@ -75,7 +74,6 @@ Edge::Ptr DelaunaySubdivision::connect(Edge::Ptr e1, Edge::Ptr e2) {
 void DelaunaySubdivision::deleteEdge(Edge::Ptr e) {
 	Edge::splice(e, e->Oprev());
 	Edge::splice(e->Sym(), e->Sym()->Oprev());
-	//qedges.erase(e->qEdge()); // remove from the hash-set
 }
 
 /** Flips the diagonal of the quadrilateral containing e. From G&S [pg. 104]. */
@@ -114,7 +112,6 @@ void DelaunaySubdivision::checkRange(const int start, const int end) const {
 /** Handles base-cases of delaunay triangulation; i.e. when |S| is 2 or 3.*/
 std::pair<Edge::Ptr, Edge::Ptr>
 DelaunaySubdivision::doBaseCases(const int start, const int end) {
-	cout << "b"<<endl;
 	const int SIZE = end-start+1;
 	if (SIZE == 2) {
 		// make a single edge
@@ -260,8 +257,6 @@ DelaunaySubdivision::unrotate_handles(std::pair<Edge::Ptr, Edge::Ptr> handles) {
 std::pair<Edge::Ptr, Edge::Ptr>
 DelaunaySubdivision::mergeTriangulations (std::pair<Edge::Ptr, Edge::Ptr> first_handles,
 		std::pair<Edge::Ptr, Edge::Ptr> second_handles) {
-
-	cout << " m"<<endl;
 	Edge::Ptr ldo = first_handles.first; Edge::Ptr ldi = first_handles.second;
 	Edge::Ptr rdi = second_handles.first; Edge::Ptr rdo = second_handles.second;
 
@@ -273,8 +268,8 @@ DelaunaySubdivision::mergeTriangulations (std::pair<Edge::Ptr, Edge::Ptr> first_
 	}
 
 	Edge::Ptr basel = connect(rdi->Sym(), ldi);
-	if (ldi->org() == ldo->org()) 	ldo = basel->Sym();
-	if (rdi->org() == rdo->org()) 	rdo = basel;
+	if ((*point_ptrs[ldi->org()]) == (*point_ptrs[ldo->org()])) 	ldo = basel->Sym();
+	if ((*point_ptrs[rdi->org()]) == (*point_ptrs[rdo->org()])) 	rdo = basel;
 
 	// merge the two triangulations
 	while (true)  {
