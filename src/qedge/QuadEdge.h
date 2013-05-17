@@ -41,6 +41,9 @@ public:
 	 *
 	 *  It returns a pointer to the first primal edge. */
 	static boost::shared_ptr<Edge> makeEdge(bool loop = false);
+
+	/** Release ownership. Useful in freeing memory.*/
+	void freePointers();
 };
 
 #endif //__QUADEDGE_H__

@@ -8,9 +8,6 @@
 
 
 #include <boost/shared_ptr.hpp>
-#include <boost/unordered_set.hpp>
-#include <boost/unordered_map.hpp>
-
 #include "utils/geom_predicates.h"
 
 #include <utility>
@@ -132,9 +129,6 @@ public:
 	typedef boost::shared_ptr<DelaunaySubdivision> Ptr;
 
 	DelaunaySubdivision(std::string fname, std::string outname="xdefaultx");
-
-	/** List of all the quad-edges in the subdivision. */
-	boost::unordered_set<QuadEdge::Ptr> qedges;
 
 	//pointer to a quad-edge of the subdivision
 	QuadEdge::Ptr randEdge;

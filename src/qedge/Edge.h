@@ -38,7 +38,6 @@ private:
 	Edge::Ptr     next;
 
 public:
-
 	int visit_num;
 
 	// the index of this edge in QuadEdge's list of 4 edges; \in {0,1,2,3}
@@ -46,6 +45,9 @@ public:
 
 	/** Return the quad-edge this edge is a part of.*/
 	QuadEdge::Ptr qEdge();
+
+	/** Release ownership. Useful in freeing memory.*/
+	void freePointers();
 
 	/** Operations on the origin/ destination of this edge.*/
 	int org();

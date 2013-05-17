@@ -43,7 +43,7 @@ bool DelaunaySubdivision::valid (Edge::Ptr e, Edge::Ptr basel) {
 }
 
 /** Constructor. */
-DelaunaySubdivision::DelaunaySubdivision(string fname, string outname) : num_qedges(0),points(), qedges() {
+DelaunaySubdivision::DelaunaySubdivision(string fname, string outname) : num_qedges(0),points() {
 	if (fname.substr(fname.length()-5,5)!= ".node") {
 		cout << "Expecting input file with .node extension. Instead, found "
 				<<fname.substr(fname.length()-5,5)<<". Exiting.\n";
@@ -73,6 +73,11 @@ Edge::Ptr DelaunaySubdivision::connect(Edge::Ptr e1, Edge::Ptr e2) {
 void DelaunaySubdivision::deleteEdge(Edge::Ptr e) {
 	Edge::splice(e, e->Oprev());
 	Edge::splice(e->Sym(), e->Sym()->Oprev());
+
+	// free memory
+	QuadEdge::Ptr qedge = e->qEdge();
+	qedge->freePointers();
+	qedge.reset();
 }
 
 /** Flips the diagonal of the quadrilateral containing e. From G&S [pg. 104]. */
@@ -114,7 +119,7 @@ DelaunaySubdivision::doBaseCases(const int start, const int end) {
 	const int SIZE = end-start+1;
 	if (SIZE == 2) {
 		// make a single edge
-		Edge::Ptr a =  QuadEdge::makeEdge(); //qedges.insert(a->qEdge());
+		Edge::Ptr a =  QuadEdge::makeEdge();
 		a->setOrg (points[start]);
 		a->setDest(points[start + 1]);
 
@@ -127,8 +132,8 @@ DelaunaySubdivision::doBaseCases(const int start, const int end) {
 		int p3  = points[start + 2];
 
 		// make two edges
-		Edge::Ptr a = QuadEdge::makeEdge(); //qedges.insert(a->qEdge());
-		Edge::Ptr b = QuadEdge::makeEdge(); //qedges.insert(b->qEdge());
+		Edge::Ptr a = QuadEdge::makeEdge();
+		Edge::Ptr b = QuadEdge::makeEdge();
 		Edge::splice(a->Sym(), b);
 		a->setOrg(p1); a->setDest(p2);
 		b->setOrg(p2); b->setDest(p3);

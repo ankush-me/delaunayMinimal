@@ -13,6 +13,13 @@
 /** Return the quad-edge this edge is a part of.*/
 QuadEdge::Ptr Edge::qEdge() {return qedge;}
 
+/** Release ownership. Useful in freeing memory.*/
+void Edge::freePointers( ) {
+	qedge.reset();
+	next.reset();
+	data.reset();
+}
+
 /** Return the origin/ destination of this edge.*/
 int Edge::org() {
 	return origin;

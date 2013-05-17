@@ -3,7 +3,6 @@
 
 QuadEdge::QuadEdge() : visit_num(0), edges(4) {}
 
-
 /** Makes a new quad-edge.
  *  It returns a pointer to the first primal edge. */
 Edge::Ptr QuadEdge::makeEdge(bool loop) {
@@ -31,4 +30,12 @@ Edge::Ptr QuadEdge::makeEdge(bool loop) {
 		qedge->edges[i]->qedge = qedge;
 
 	return (loop? qedge->edges[1] : qedge->edges[0]);
+}
+
+/** Release ownership. Useful in freeing memory.*/
+void QuadEdge::freePointers() {
+	for (int i=0; i < edges.size(); i++) {
+		edges[i]->freePointers();
+		edges[i].reset();
+	}
 }
