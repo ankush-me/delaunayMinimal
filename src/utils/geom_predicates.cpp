@@ -2,17 +2,27 @@
 
 // Shewchuk's robust predicates
 extern "C" {
-	#include "predicates.c"
+#include "predicates.c"
 }
 
 using namespace Eigen;
 
+float initializedExact = false;
+
+void inline initExact() {
+	if (!initializedExact) {
+		initializedExact = true;
+		exactinit();
+	}
+}
 
 double orient2d (Vector2d pa, Vector2d pb, Vector2d pc) {
+	initExact();
 	return (double) orient2d(pa.data(), pb.data(), pc.data());
 }
 
 double orient2d (Vector2f pa, Vector2f pb, Vector2f pc) {
+	initExact();
 	Vector2d v1((double) pa[0], (double) pa[1]);
 	Vector2d v2((double) pb[0], (double) pb[1]);
 	Vector2d v3((double) pc[0], (double) pc[1]);
@@ -20,12 +30,14 @@ double orient2d (Vector2f pa, Vector2f pb, Vector2f pc) {
 }
 
 double incircle (Eigen::Vector2d pa, Eigen::Vector2d pb,
-		           Eigen::Vector2d pc, Eigen::Vector2d pd) {
+		Eigen::Vector2d pc, Eigen::Vector2d pd) {
+	initExact();
 	return incircle(pa.data(), pb.data(), pc.data(), pd.data());
 }
 
 double incircle (Eigen::Vector2f pa, Eigen::Vector2f pb,
-		           Eigen::Vector2f pc, Eigen::Vector2f pd) {
+		Eigen::Vector2f pc, Eigen::Vector2f pd) {
+	initExact();
 	Vector2d v1((double) pa[0], (double) pa[1]);
 	Vector2d v2((double) pb[0], (double) pb[1]);
 	Vector2d v3((double) pc[0], (double) pc[1]);
@@ -36,6 +48,7 @@ double incircle (Eigen::Vector2f pa, Eigen::Vector2f pb,
 bool ccw(Vector2d pa, Vector2d pb, Vector2d pc) {
 	return (bool) (orient2d(pa, pb, pc)> 0.0);
 }
+
 bool ccw(Vector2f pa, Vector2f pb, Vector2f pc) {
 	return (bool)(orient2d(pa, pb, pc) > 0.0);
 }

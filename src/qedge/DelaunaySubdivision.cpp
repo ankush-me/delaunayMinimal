@@ -21,7 +21,6 @@ bool  DelaunaySubdivision::CCW(int a, int b, int c) {
 bool DelaunaySubdivision::INCIRCLE(int a, int b, int c, int d) {
 	double val =  incircle(*(point_ptrs[a]), *(point_ptrs[b]),
 			                *(point_ptrs[c]), *(point_ptrs[d]));
-	//if (abs(val) < 1e-18) val = 0;
 	bool ret =  val > 0.0;
 	return ret;
 }
